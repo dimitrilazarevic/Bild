@@ -4,6 +4,7 @@
     import * as THREE from 'three';
     import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
     import { onMount } from 'svelte';
+    import { sphericalToXyz, xyzToSpherical } from '$lib/functions';
 
     onMount(() => {
 
@@ -27,8 +28,26 @@
 
         controls.enableZoom = false ;
         controls.enablePan = false ;
-        camera.position.set(-0.1, 0, 0) ;
+        camera.position.set(0.0001, 0, 0) ;
         updateZoom(cameraZoomIndex);
+
+        const scene = new THREE.Scene();
+
+        const geometry = new THREE.SphereGeometry( 1.05, 30, 30 );
+
+        const texture = loader.load('/test_images/bedroom.jpg');
+
+        texture.wrapS = THREE.RepeatWrapping
+        texture.repeat.x = -1
+
+        const material = new THREE.MeshBasicMaterial({
+            map: texture,
+            side: THREE.DoubleSide
+        })
+
+        const sphere = new THREE.Mesh(geometry,material);
+
+        scene.add(sphere);
 
         canvas.addEventListener('wheel',(e)=>{
 
@@ -52,23 +71,29 @@
 
         })
 
-        const scene = new THREE.Scene();
+        const raycaster = new THREE.Raycaster();
+        const pointer = new THREE.Vector2();
 
-        const geometry = new THREE.SphereGeometry( 1, 30, 30 );
+        canvas.addEventListener('dblclick',(e)=>{
+            
+            pointer.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+	        pointer.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+            raycaster.setFromCamera( pointer, camera );
+            let ray = raycaster.ray.direction;
 
-        const texture = loader.load('/test_images/bedroom.jpg');
+            const spriteMap = new THREE.TextureLoader().load( '/test_images/circle.png' );
+            const material = new THREE.SpriteMaterial( { map: spriteMap } );
+            const sprite = new THREE.Sprite( material );
+            scene.add( sprite );
 
-        texture.wrapS = THREE.RepeatWrapping
-        texture.repeat.x = -1
+            sprite.position.set(ray.x,ray.y,ray.z);
+            sprite.scale.set(0.1,0.1,0.1);
 
-        const material = new THREE.MeshBasicMaterial({
-            map: texture,
-            side: THREE.DoubleSide
+            console.log(ray);
+            
         })
 
-        const sphere = new THREE.Mesh(geometry,material);
 
-        scene.add(sphere);
 
         function animate() {
 
@@ -91,6 +116,17 @@
     
 </script>
 
-<main>
-    <canvas id="canvas"></canvas>
-</main>
+<canvas id="canvas"></canvas>
+
+<style>
+
+    body,html,main{
+        margin: 0;
+    }
+    canvas {
+        width: 100vw;
+        height: 100vh;
+        display: block;
+     }
+
+</style>

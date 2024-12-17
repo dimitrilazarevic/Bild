@@ -7,9 +7,12 @@
     - Fait avec un event listener sur le canvas qui écoute wheel. On définit ensuite une position prédéfinie de zoom avec une vitesse de rotation différentiée.
 - [x] : Permettre de rotationner
     - Grâce aux OrbitControls.
-- [ ] : Pouvoir placer des markers à des endroits avec un toggle
+- [ ] : Pouvoir placer des markers à des endroits
+- [ ] : Arriver à afficher les markers pile au centre du clic
+- [ ] : Associer à un toggle les markers
 - [ ] : Pouvoir associer à ces markers un chemin vers l'image suivante
 - [ ] : Pouvoir accéder à une autre image en cliquant sur ce marqueur
+- [x] : Convertir en coordonnées sphériques les coordonnées XYZ
 
 
 # 12/12/2024
